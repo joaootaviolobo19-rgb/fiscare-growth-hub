@@ -1,24 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
-export const Route = createFileRoute("/")({
-  component: Index,
+import { createFileRoute } from '@tanstack/react-router';
+import { MotionConfig } from 'framer-motion';
+import { Header, Hero, Pains, Dictionary, Services, Process, FAQ, FinalCTA, Footer } from '@/components/fiscare/sections';
+export const Route = createFileRoute('/')({
+ head: () => ({meta:[{title:'Fiscare | Sua empresa inteira cuidada por uma só equipe'},{name:'description',content:'Financeiro, impostos, equipe, marketing e planejamento. Conheça a Fiscare Assessoria Empresarial e peça seu diagnóstico gratuito.'},{property:'og:title',content:'Fiscare | Assessoria Empresarial sem complicação'},{property:'og:description',content:'Todas as frentes do seu negócio, uma só equipe. Peça um diagnóstico gratuito e cresça com organização.'},{property:'og:type',content:'website'},{name:'twitter:card',content:'summary_large_image'}]}),
+ component:Index,
 });
-
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
-}
+function Index(){return <MotionConfig reducedMotion="user"><Header/><main><Hero/><Pains/><Dictionary/><Services/><Process/><FAQ/><FinalCTA/></main><Footer/></MotionConfig>;}
