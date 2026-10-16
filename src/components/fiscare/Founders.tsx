@@ -28,7 +28,7 @@ export function Founders() {
         <Reveal delay={.12}><p className="section-copy">Somos Patrícia, Adoilson e Tamires, os três sócios fundadores da Fiscare. Uma equipe próxima, para conversar com você e cuidar de cada frente do seu negócio.</p></Reveal>
       </div>
       <div className="founders-layout">
-        <Reveal className="founders-group"><motion.img src={group.url} alt="Adoilson, Tamires e Patrícia conversando na Fiscare" width={446} height={661} loading="lazy" style={reduced ? undefined : { y }}/></Reveal>
+        <Reveal className="founders-group"><motion.img src={group.url} alt="Adoilson, Tamires e Patrícia conversando na Fiscare" width={446} height={661} loading="lazy" style={reduced ? {} : { y }}/></Reveal>
         <div className="founders-people">{founders.map((person, i) => <Reveal key={person.name} delay={i * .12} className="founder-person"><div className={`founder-portrait portrait-${i}`}><img src={person.image} alt={`${person.name}, ${person.name === 'Adoilson' ? 'sócio fundador' : 'sócia fundadora'} da Fiscare`} loading="lazy" width={300} height={360}/></div><div className="founder-caption"><h3>{person.name}</h3><p>{person.name === 'Adoilson' ? 'Sócio fundador' : 'Sócia fundadora'}</p></div></Reveal>)}<Reveal className="founders-invitation"><p>Seu próximo passo começa<br/>com uma boa conversa.</p><DiagnosisButton large/></Reveal></div>
       </div>
     </div>
