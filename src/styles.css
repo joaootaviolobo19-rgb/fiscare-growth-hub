@@ -91,6 +91,8 @@
 .dictionary-definition h3 {font-size:29px;font-weight:800;line-height:1.3;}
 .dictionary-definition p {font-size:19px;line-height:1.8;margin-top:16px;max-width:520px;}
 .services-heading {text-align:left;margin-bottom:48px;}
+.services-heading .section-label {color:var(--cta);}
+.services-heading .section-copy {color:var(--on-dark-muted);}
 .services-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 64px;}
 .service-card {padding:32px 0 36px;border:0;border-top:1px solid var(--glass-border);border-radius:0;background:transparent;color:var(--on-dark);box-shadow:none;}
 .service-card:hover {transform:translateY(-4px);border-color:var(--cta);box-shadow:none;}
