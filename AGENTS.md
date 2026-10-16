@@ -14,3 +14,5 @@
 - Keep diagnosis schemas and the submission boundary in a browser-safe shared module; any connected receiving server must revalidate the same schema to prevent invalid submissions.
 - The unconnected diagnosis flow is explicitly a preview and must never imply real delivery without a connected submission service.
 - Keep privacy and terms in dedicated public content routes with independent metadata so footer links are usable and shareable.
+
+- Keep founder photography and founder presentation in a focused browser-safe section module, shared with the opening avatar strip, so identities remain consistent across the page.
