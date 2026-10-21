@@ -1,128 +1,71 @@
 # Fiscare Growth Hub
-### Landing Page Institucional de Alta Conversão
 
-O **Fiscare Growth Hub** é uma landing page institucional desenvolvida para a Fiscare Assessoria Empresarial, com foco na conversão de visitantes em potenciais clientes. A plataforma combina uma apresentação estratégica da empresa, um dicionário interativo de termos financeiros e contábeis e um formulário inteligente de múltiplas etapas para qualificação de leads.
+Landing page institucional desenvolvida para a Fiscare Assessoria Empresarial. O projeto apresenta os serviços da empresa, organiza conteúdos informativos sobre temas financeiros e oferece um fluxo de diagnóstico para potenciais clientes.
 
-**Demonstração online:** https://fiscare-growth-hub.vercel.app
+**Demonstração:** [fiscare-growth-hub.vercel.app](https://fiscare-growth-hub.vercel.app)
 
----
+## Funcionalidades
 
-## Principais Funcionalidades
+- Apresentação institucional e navegação pelas áreas de serviço.
+- Conteúdo interativo com conceitos financeiros e contábeis.
+- Formulário de diagnóstico em três etapas, com validação dos dados.
+- Páginas dedicadas aos termos de uso e à política de privacidade.
+- Interface responsiva e componentes de navegação e apresentação reutilizáveis.
 
-**Formulário Multietapas (Wizard)**
+O formulário está configurado como uma demonstração com estrutura pronta para integração. No estado atual, os dados não são enviados a um serviço de recebimento.
 
-Fluxo intuitivo e organizado para coletar informações e qualificar potenciais clientes de maneira dinâmica, tornando o preenchimento mais simples e eficiente.
+## Tecnologias
 
-**Dicionário Financeiro Interativo**
+- React e TypeScript
+- TanStack Start e TanStack Router
+- Vite
+- Tailwind CSS
+- React Hook Form e Zod
+- Framer Motion
+- Vitest e Testing Library
 
-Componente educativo que simplifica conceitos contábeis, financeiros e fiscais, tornando essas informações mais acessíveis para pequenas e médias empresas (PMEs).
+## Requisitos
 
-**Design Orientado às Necessidades do Cliente**
+- Node.js compatível com a versão de Vite definida no projeto
+- npm ou Bun
 
-Seções estratégicas voltadas aos principais desafios da gestão empresarial, apresentando soluções alinhadas às necessidades dos empreendedores.
+## Instalação e execução
 
-**Experiência Mobile-First**
-
-Interface responsiva, desenvolvida para oferecer uma experiência consistente e intuitiva em smartphones, tablets e computadores.
-
-**Animações e Microinterações**
-
-Utilização do Framer Motion para implementar animações fluidas e transições que tornam a navegação mais dinâmica e refinada.
-
----
-
-## Tecnologias e Ferramentas
-
-- React e TypeScript para o desenvolvimento da interface.
-- Tailwind CSS para estilização e responsividade.
-- Framer Motion para animações e microinterações.
-- Vite para execução do ambiente de desenvolvimento e geração da versão de produção.
-- Vitest para testes automatizados.
-
----
-
-## Como Executar o Projeto
-
-### 1. Clonar o repositório
-
-Abra o terminal e execute:
+Clone o repositório:
 
 ```bash
-git clone https://github.com/joaootaviolobo19-rgb/centro-de-crescimento-fiscal.git
+git clone https://github.com/joaootaviolobo19-rgb/fiscare-growth-hub.git
+cd fiscare-growth-hub
 ```
 
-Acesse a pasta do projeto:
-
-```bash
-cd centro-de-crescimento-fiscal
-```
-
-### 2. Instalar as dependências
-
-Utilizando npm:
+Instale as dependências e inicie o servidor de desenvolvimento:
 
 ```bash
 npm install
-```
-
-Ou, utilizando Bun:
-
-```bash
-bun install
-```
-
-### 3. Iniciar o servidor de desenvolvimento
-
-Com npm:
-
-```bash
 npm run dev
 ```
 
-Com Bun:
+O Vite informa no terminal o endereço local da aplicação.
 
-```bash
-bun run dev
-```
-
-Após iniciar o servidor, acesse o endereço informado no terminal. Por padrão, o Vite utiliza:
-
-http://localhost:5173
-
----
-
-## Scripts Disponíveis
+## Scripts disponíveis
 
 | Comando | Descrição |
-|---|---|
+| --- | --- |
 | `npm run dev` | Inicia o servidor de desenvolvimento. |
-| `npm run build` | Gera a versão otimizada para produção. |
-| `npm run preview` | Permite visualizar localmente a versão de produção. |
-| `npm run test` | Executa os testes automatizados utilizando Vitest. |
+| `npm run build` | Gera a versão de produção. |
+| `npm run preview` | Serve localmente a versão gerada para pré-visualização. |
+| `npm run lint` | Executa o ESLint. |
+| `npm run test` | Executa os testes automatizados com Vitest. |
 
----
+## Estrutura
 
-## Arquitetura do Projeto
+- `src/components/`: componentes da interface.
+- `src/hooks/`: hooks reutilizáveis.
+- `src/lib/`: utilitários e lógica compartilhada.
+- `src/routes/`: rotas da aplicação, incluindo as páginas institucionais e legais.
+- `src/test/`: configuração e recursos de teste.
+- `src/styles.css`: estilos globais.
 
-A aplicação segue uma estrutura modular, organizada para facilitar a manutenção, a reutilização de componentes e a evolução do sistema.
+## Desenvolvimento
 
-```text
-src/
-├── assets/       # Logotipos, imagens e recursos estáticos
-├── components/   # Componentes da interface
-│   ├── Header
-│   ├── Hero
-│   ├── FAQ
-│   └── Form
-├── styles/       # Estilos globais e configurações do Tailwind CSS
-├── types/        # Definições e tipagens do TypeScript
-└── App.tsx       # Ponto de entrada da aplicação
-```
-
----
-
-## Desenvolvedor
-
-**João Otávio da Silva Lobo**
-
-Projeto concebido e desenvolvido para a marca **Fiscare Assessoria Empresarial**, com foco em experiência do usuário, comunicação estratégica, educação financeira e conversão digital.
+Este repositório contém a implementação da experiência digital da Fiscare Growth Hub. O fluxo de diagnóstico ainda requer a conexão com um serviço de recebimento para processar solicitações reais.
