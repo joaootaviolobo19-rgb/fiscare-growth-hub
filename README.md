@@ -26,7 +26,7 @@ O formulário está configurado como uma demonstração com estrutura pronta par
 
 ## Requisitos
 
-- Node.js compatível com a versão de Vite definida no projeto
+- Node.js
 - npm ou Bun
 
 ## Instalação e execução
