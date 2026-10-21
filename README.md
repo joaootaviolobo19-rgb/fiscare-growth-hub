@@ -26,7 +26,7 @@ O formulário está configurado como uma demonstração com estrutura pronta par
 
 ## Requisitos
 
-- Node.js
+- Node.js 20.19+ ou 22.12+
 - npm ou Bun
 
 ## Instalação e execução
