@@ -1,27 +1,28 @@
-import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import { Reveal, DiagnosisButton } from './shared';
-import patricia from '@/assets/patricia.png';
-import adoilson from '@/assets/adoilson.png';
-import tamires from '@/assets/tamires.png';
-import group from '@/assets/fundadores.png';
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import { Reveal, DiagnosisButton } from "./shared";
+import patricia from "@/assets/patricia.png";
+import adoilson from "@/assets/adoilson.png";
+import tamires from "@/assets/tamires.png";
+import group from "@/assets/fundadores.png";
 
 const founders = [
-  { name: 'Patrícia', image: patricia },
-  { name: 'Adoilson', image: adoilson },
-  { name: 'Tamires', image: tamires },
+  { name: "Patrícia", image: patricia },
+  { name: "Adoilson", image: adoilson },
+  { name: "Tamires", image: tamires },
 ];
 
 export function FounderFaces() {
   return (
     <div className="founder-faces">
       <div className="founder-avatars">
-        {founders.map(person => (
+        {founders.map((person) => (
           <img key={person.name} src={person.image} alt={person.name} width={48} height={48} />
         ))}
       </div>
       <p>
-        Patrícia, Adoilson e Tamires.<br />
+        Patrícia, Adoilson e Tamires.
+        <br />
         <span>Gente de verdade, cuidando do seu negócio.</span>
       </p>
     </div>
@@ -31,7 +32,7 @@ export function FounderFaces() {
 export function Founders() {
   const ref = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], [-20, 20]);
 
   return (
@@ -41,14 +42,14 @@ export function Founders() {
           <Reveal>
             <p className="section-label">QUEM ESTÁ DO SEU LADO</p>
             <h2 className="section-title">
-              Antes de cuidar de empresas,<br />
-              a gente cuida de pessoas.
+              Antes de cuidar de empresas,
+              <br />a gente cuida de pessoas.
             </h2>
           </Reveal>
           <Reveal delay={0.12}>
             <p className="section-copy">
-              Somos Patrícia, Adoilson e Tamires, os três sócios fundadores da Fiscare.
-              Uma equipe próxima, para conversar com você e cuidar de cada frente do seu negócio.
+              Somos Patrícia, Adoilson e Tamires, os três sócios fundadores da Fiscare. Uma equipe
+              próxima, para conversar com você e cuidar de cada frente do seu negócio.
             </p>
           </Reveal>
         </div>
@@ -69,7 +70,7 @@ export function Founders() {
                 <div className={`founder-portrait portrait-${i}`}>
                   <img
                     src={person.image}
-                    alt={`${person.name}, ${person.name === 'Adoilson' ? 'sócio fundador' : 'sócia fundadora'} da Fiscare`}
+                    alt={`${person.name}, ${person.name === "Adoilson" ? "sócio fundador" : "sócia fundadora"} da Fiscare`}
                     loading="lazy"
                     width={300}
                     height={360}
@@ -77,13 +78,14 @@ export function Founders() {
                 </div>
                 <div className="founder-caption">
                   <h3>{person.name}</h3>
-                  <p>{person.name === 'Adoilson' ? 'Sócio fundador' : 'Sócia fundadora'}</p>
+                  <p>{person.name === "Adoilson" ? "Sócio fundador" : "Sócia fundadora"}</p>
                 </div>
               </Reveal>
             ))}
             <Reveal className="founders-invitation">
               <p>
-                Seu próximo passo começa<br />
+                Seu próximo passo começa
+                <br />
                 com uma boa conversa.
               </p>
               <DiagnosisButton large />
