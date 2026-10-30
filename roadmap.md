@@ -39,6 +39,9 @@
   anunciadas por leitor de tela (ligadas com `aria-describedby`).
 - Política e Termos atualizados com o canal de WhatsApp, inclusive o aviso de que `wa.me` leva o
   visitante para fora do site.
+- **Código publicado no GitHub:** o `main` está em `ae79e8f` (limpeza do gerador, WhatsApp, animações,
+  fonte auto-hospedada e as correções da auditoria). Lint, `tsc --noEmit`, 15 testes e o build do Netlify
+  rodaram limpos antes do push. Falta só o deploy do lado do Netlify.
 
 ## Pendente antes do lançamento
 
