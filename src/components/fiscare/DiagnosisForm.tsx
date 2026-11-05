@@ -1,14 +1,24 @@
 import { useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 import { ArrowRight, ArrowLeft, ShieldCheck, Check, CheckCircle2, RotateCcw } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
+import { formatCnpj, isValidCnpj, normalizeCnpj } from "@/lib/cnpj";
 import { companySchema, contactSchema, diagnosisSchema, industries, needs } from "@/lib/diagnosis";
+import { EMAILJS_NOT_CONFIGURED, leadTemplateParams, sendLead } from "@/lib/emailjs";
 
 const stepLabels = ["Sobre você", "Seu negócio", "Como podemos ajudar"];
 
 type TextField = "name" | "phone" | "email" | "company";
 const maxLengths: Record<TextField, number> = { name: 100, phone: 20, email: 255, company: 150 };
+const autoComplete: Record<TextField, string> = {
+  name: "name",
+  phone: "tel",
+  email: "email",
+  company: "organization",
+};
+const focusOrder = ["name", "phone", "email", "company", "industry", "needs", "consent"];
 
 const emptyData = {
   name: "",
@@ -16,17 +26,23 @@ const emptyData = {
   email: "",
   company: "",
   industry: "",
+  cnpj: "",
+  hasNoCnpj: false,
   needs: [] as string[],
   message: "",
   consent: false,
 };
+
+// Se algum dia o autofill de um visitante real cair neste campo, desligue a constante.
+const HONEYPOT_ENABLED = true;
 
 export function DiagnosisForm() {
   const [step, setStep] = useState(0);
   const [success, setSuccess] = useState(false);
   const [busy, setBusy] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const reduced = useReducedMotion();
+  const [trap, setTrap] = useState("");
+  const reduced = useReducedMotionSafe();
   const [data, setData] = useState(emptyData);
 
   function update(key: string, value: string | boolean | string[]) {
@@ -34,13 +50,26 @@ export function DiagnosisForm() {
     setErrors((e) => ({ ...e, [key]: "" }));
   }
 
+  function toggleNoCnpj(checked: boolean) {
+    setData((d) => ({ ...d, hasNoCnpj: checked, cnpj: checked ? "" : d.cnpj }));
+  }
+
   async function next(e: React.FormEvent) {
     e.preventDefault();
+    if (busy || success) return;
     const result = (
       step === 0 ? contactSchema : step === 1 ? companySchema : diagnosisSchema
     ).safeParse(data);
     if (!result.success) {
-      setErrors(Object.fromEntries(result.error.issues.map((i) => [String(i.path[0]), i.message])));
+      const nextErrors = Object.fromEntries(
+        result.error.issues.map((i) => [String(i.path[0]), i.message]),
+      );
+      setErrors(nextErrors);
+      const first = focusOrder.find((key) => nextErrors[key]);
+      const target = first
+        ? document.getElementById(first === "needs" ? "needs-group" : first)
+        : null;
+      target?.focus();
       return;
     }
     if (step < 2) {
@@ -49,26 +78,26 @@ export function DiagnosisForm() {
       return;
     }
 
+    // robô preencheu o campo escondido: descarta o envio sem gastar e-mail, mas segue o fluxo normal
+    if (HONEYPOT_ENABLED && trap.trim() !== "") {
+      setSuccess(true);
+      return;
+    }
+
     setBusy(true);
+    setErrors({});
     try {
-      const emailjs = (await import("@emailjs/browser")).default;
-      await emailjs.send(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        {
-          nome: data.name,
-          whatsapp: data.phone,
-          email: data.email,
-          empresa: data.company || "Não informado",
-          ramo: data.industry || "Não informado",
-          areas: data.needs.length > 0 ? data.needs.join(", ") : "Não informado",
-          mensagem: data.message || "Nenhuma mensagem",
-        },
-        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
-      );
+      await sendLead(leadTemplateParams(data));
       setSuccess(true);
     } catch (error) {
-      console.error("Erro ao enviar e-mail:", error);
+      const status = (error as { status?: unknown } | null)?.status;
+      const reason =
+        error instanceof Error && error.message === EMAILJS_NOT_CONFIGURED
+          ? "EmailJS sem configuração"
+          : typeof status === "number"
+            ? status
+            : "falha de rede";
+      console.error("Erro ao enviar e-mail:", reason);
       setErrors({ submit: "Não foi possível enviar. Verifique sua conexão e tente novamente." });
     } finally {
       setBusy(false);
@@ -79,6 +108,7 @@ export function DiagnosisForm() {
     setSuccess(false);
     setStep(0);
     setErrors({});
+    setTrap("");
     // em um computador compartilhado, o próximo visitante não pode herdar o lead anterior
     setData({ ...emptyData, needs: [] });
   }
@@ -91,11 +121,15 @@ export function DiagnosisForm() {
       <input
         className="field-input"
         id={key}
+        name={key}
         type={type}
         value={data[key]}
         onChange={(e) => update(key, e.target.value)}
         placeholder={placeholder}
         maxLength={maxLengths[key]}
+        autoComplete={autoComplete[key]}
+        enterKeyHint="next"
+        required
         aria-invalid={Boolean(errors[key])}
         aria-describedby={errors[key] ? `${key}-error` : undefined}
       />
@@ -106,6 +140,9 @@ export function DiagnosisForm() {
       )}
     </div>
   );
+
+  const cnpjWarning =
+    !data.hasNoCnpj && normalizeCnpj(data.cnpj).length === 14 && !isValidCnpj(data.cnpj);
 
   return (
     <div id="diagnostico" className="form-card">
@@ -136,7 +173,8 @@ export function DiagnosisForm() {
             <br className="hidden sm:block" /> gratuito.
           </h2>
           <p className="form-caption mt-2">
-            Vamos entender seu negócio e encontrar o melhor caminho para você.
+            Vamos entender seu negócio e encontrar o melhor caminho para você. São três etapas
+            rápidas.
           </p>
 
           <div className="mt-6 mb-5">
@@ -154,7 +192,19 @@ export function DiagnosisForm() {
           </div>
 
           <form onSubmit={next} noValidate>
-            <AnimatePresence mode="wait">
+            <div className="hp-field" aria-hidden="true">
+              <label htmlFor="fiscare_extra">Não preencha</label>
+              <input
+                id="fiscare_extra"
+                name="fiscare_extra"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={trap}
+                onChange={(e) => setTrap(e.target.value)}
+              />
+            </div>
+            <AnimatePresence mode="wait" initial={false}>
               <motion.div
                 key={step}
                 initial={{ opacity: 0, x: reduced ? 0 : 12 }}
@@ -165,7 +215,7 @@ export function DiagnosisForm() {
               >
                 {step === 0 && (
                   <>
-                    {field("name", "Seu nome", "Como podemos chamar você?")}
+                    {field("name", "Seu nome", "Nome e sobrenome")}
                     {field("phone", "WhatsApp", "(00) 00000-0000", "tel")}
                     {field("email", "E-mail", "voce@suaempresa.com.br", "email")}
                   </>
@@ -174,14 +224,56 @@ export function DiagnosisForm() {
                   <>
                     {field("company", "Nome da empresa", "Sua empresa ou seu futuro negócio")}
                     <div>
+                      <label className="field-label" htmlFor="cnpj">
+                        CNPJ <span className="font-normal text-muted-foreground">(opcional)</span>
+                      </label>
+                      <input
+                        className="field-input"
+                        id="cnpj"
+                        name="cnpj"
+                        type="text"
+                        inputMode="text"
+                        autoComplete="off"
+                        maxLength={18}
+                        disabled={data.hasNoCnpj}
+                        value={data.cnpj}
+                        onChange={(e) => update("cnpj", formatCnpj(e.target.value))}
+                        placeholder="00.000.000/0000-00"
+                        aria-describedby={cnpjWarning ? "cnpj-hint" : undefined}
+                      />
+                      {cnpjWarning && (
+                        <p className="field-hint" id="cnpj-hint" aria-live="polite">
+                          Confira o CNPJ — você pode enviar assim mesmo.
+                        </p>
+                      )}
+                      <label className="mt-2 flex items-center gap-2 text-[10px] font-medium text-primary">
+                        <input
+                          id="no-cnpj"
+                          name="hasNoCnpj"
+                          type="checkbox"
+                          checked={data.hasNoCnpj}
+                          onChange={(e) => toggleNoCnpj(e.target.checked)}
+                          className="size-4 shrink-0 accent-primary"
+                        />
+                        Ainda não tenho CNPJ
+                      </label>
+                      {data.hasNoCnpj && (
+                        <p className="field-hint">
+                          Sem problema: o diagnóstico também orienta os primeiros passos.
+                        </p>
+                      )}
+                    </div>
+                    <div>
                       <label htmlFor="industry" className="field-label">
                         Ramo de atuação
                       </label>
                       <select
                         id="industry"
+                        name="industry"
                         className="field-input"
                         value={data.industry}
                         onChange={(e) => update("industry", e.target.value)}
+                        required
                         aria-invalid={Boolean(errors["industry"])}
                         aria-describedby={errors["industry"] ? "industry-error" : undefined}
                       >
@@ -196,14 +288,15 @@ export function DiagnosisForm() {
                         </p>
                       )}
                     </div>
-                    <div className="mt-5 rounded-md bg-accent p-4 text-xs leading-6 text-primary">
-                      Cada empresa tem seu momento. Nosso diagnóstico começa entendendo o seu.
-                    </div>
                   </>
                 )}
                 {step === 2 && (
                   <>
-                    <fieldset aria-describedby={errors["needs"] ? "needs-error" : undefined}>
+                    <fieldset
+                      id="needs-group"
+                      tabIndex={-1}
+                      aria-describedby={errors["needs"] ? "needs-error" : undefined}
+                    >
                       <legend className="field-label">Precisa de ajuda com</legend>
                       <div className="flex flex-wrap gap-2">
                         {needs.map((n) => (
@@ -241,8 +334,10 @@ export function DiagnosisForm() {
                       </label>
                       <textarea
                         id="message"
+                        name="message"
                         className="field-input"
                         maxLength={1000}
+                        enterKeyHint="send"
                         placeholder="O que mais preocupa você hoje?"
                         value={data.message}
                         onChange={(e) => update("message", e.target.value)}
@@ -250,9 +345,12 @@ export function DiagnosisForm() {
                     </div>
                     <label className="flex items-start gap-2.5 text-[10px] leading-5 text-muted-foreground">
                       <input
+                        id="consent"
+                        name="consent"
                         type="checkbox"
                         checked={data.consent}
                         onChange={(e) => update("consent", e.target.checked)}
+                        required
                         aria-describedby={errors["consent"] ? "consent-error" : undefined}
                         className="mt-1 size-4 shrink-0 accent-primary"
                       />

@@ -1,8 +1,8 @@
 # Fiscare — Landing Page
 
 Landing page institucional da Fiscare Assessoria Empresarial: apresenta os serviços,
-a equipe e converte visitantes por meio de um formulário de diagnóstico gratuito
-em 3 etapas, que envia os dados por EmailJS, e do WhatsApp como canal direto.
+a proposta da assessoria e converte visitantes por meio de um formulário de diagnóstico
+gratuito em 3 etapas, que envia os dados por EmailJS, e do WhatsApp como canal direto.
 
 ## Stack
 
@@ -44,13 +44,41 @@ O `npm run dev` não precisa do runtime Deno: o emulador de Netlify Edge Functio
 - `src/routes/` — rotas por arquivo (TanStack Start): `/` (landing), `/privacidade`, `/termos`.
   `routeTree.gen.ts` é gerado automaticamente; não edite à mão.
 - `src/components/fiscare/` — seções da landing (`sections.tsx`), formulário (`DiagnosisForm.tsx`),
-  fundadores (`Founders.tsx`), blocos compartilhados (`shared.tsx`) e controles de WhatsApp (`Whatsapp.tsx`).
+  abertura em cortina (`IntroCurtain.tsx`), cena financeira de fundo em SVG (`FinanceBackdrop.tsx`),
+  marquee de serviços (`ServiceMarquee.tsx`), prova social (`SocialProof.tsx`), blocos compartilhados
+  (`shared.tsx`) e controles de WhatsApp (`Whatsapp.tsx`).
 - `src/components/ui/button.tsx` — único componente de UI base; novas variantes entram no `cva`
   de `buttonVariants` local ao arquivo.
+- `src/lib/emailjs.ts` — transporte dos leads: lê as variáveis `VITE_EMAILJS_*`, monta as variáveis
+  do modelo (incluindo o registro de consentimento e a data de envio) e repete falhas de rede/5xx
+  até 3 vezes, com 15s de timeout por tentativa.
 - `src/lib/diagnosis.ts` — schemas Zod e listas (`industries`, `needs`) do formulário. É a fronteira
   de validação: qualquer receptor futuro dos dados deve revalidar com `diagnosisSchema`.
+- `src/lib/landing-content.ts` — serviços, grupos do FAQ e as frases de prova social. Texto novo
+  desta página entra aqui, não dentro do JSX.
+- `src/lib/cnpj.ts` — máscara e dígito verificador do CNPJ (numérico e alfanumérico). O campo é
+  opcional e nunca impede o envio; o resultado só alimenta um aviso na tela.
 - `src/lib/contact.ts` — número do WhatsApp, mensagens pré-preenchidas e `whatsappLink()`. Todo ponto
   de contato no site sai daqui: para trocar o número, edite apenas este arquivo.
+
+## Formulário e entrega dos leads
+
+O formulário registra nome, WhatsApp, e-mail, empresa, CNPJ (opcional), ramo, áreas de interesse e
+mensagem. O e-mail é montado com onze variáveis fixas (`nome`, `whatsapp`, `email`, `empresa`, `cnpj`,
+`possui_cnpj`, `ramo`, `areas`, `mensagem`, `consentimento`, `enviado_em`) — o modelo em
+`emailjs/template-diagnostico.html` já usa todas. Se faltar uma variável no painel do EmailJS, a
+mensagem chega sem aquele campo.
+
+No painel, o modelo deve ficar com assunto `Novo diagnóstico — {{empresa}}` e "Reply To" = `{{email}}`,
+para que responder o e-mail fale direto com o visitante. Se você criar um modelo novo em vez de editar
+o atual, copie o novo id para `VITE_EMAILJS_TEMPLATE_ID` no `.env` e no Netlify.
+
+- Quem ainda não tem CNPJ marca a opção e o lead vai com "Ainda não possui CNPJ" / `possui_cnpj: Não`.
+- Falha de rede ou erro 5xx é repetida até 3 vezes, com timeout de 15s por tentativa; erro 4xx não é
+  repetido. Em caso de falha o formulário continua preenchido e o botão volta a funcionar.
+- O lead nunca é gravado em `localStorage`/`sessionStorage`, e o log mostra apenas o código do erro.
+- Como o envio só acontece com o consentimento marcado, o e-mail leva `consentimento` e `enviado_em`
+  como registro mínimo do "autorizo" (LGPD).
 
 ## Contato pelo WhatsApp
 
@@ -68,7 +96,7 @@ em telas largas com ponteiro fino; no celular o botão flutuante já cumpre esse
 ## Publicação
 
 O site roda no **Netlify** (`netlify.toml` + `@netlify/vite-plugin-tanstack-start`; o build gera
-`dist/client` e a função em `.netlify/v1/functions/server.mjs`, incluindo as fotos dos fundadores).
+`dist/client` e a função em `.netlify/v1/functions/server.mjs`).
 
 O endereço `fiscare-growth-hub.vercel.app` ainda registrado como página inicial do repositório no
 GitHub está morto (`DEPLOYMENT_NOT_FOUND`) — quem abre essa URL vê o site sem as fotos e sem páginas.

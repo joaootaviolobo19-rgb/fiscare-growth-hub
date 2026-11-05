@@ -31,9 +31,11 @@ function Privacy() {
       </p>
       <h2>Dados e finalidade</h2>
       <p>
-        O formulário solicita nome, WhatsApp, e-mail, dados da empresa e áreas em que você busca
-        ajuda. Esses dados são enviados à equipe da Fiscare por serviço de e-mail e usados apenas
-        para responder ao seu pedido de diagnóstico, mediante sua autorização.
+        O formulário solicita nome, WhatsApp, e-mail, nome da empresa, CNPJ (quando houver), ramo de
+        atuação e áreas em que você busca ajuda. Esses dados são enviados à equipe da Fiscare pelo
+        serviço EmailJS e usados apenas para responder ao seu pedido de diagnóstico, mediante sua
+        autorização. O CNPJ é opcional: quem ainda não abriu a empresa pode enviar o formulário
+        informando essa condição.
       </p>
       <h2>Contato pelo WhatsApp</h2>
       <p>

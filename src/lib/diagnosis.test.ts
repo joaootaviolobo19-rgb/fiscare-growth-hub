@@ -1,12 +1,14 @@
 import { describe, expect, it } from "vitest";
-import { contactSchema, diagnosisSchema } from "./diagnosis";
+import { companySchema, contactSchema, diagnosisSchema } from "./diagnosis";
 const valid = {
   name: "João Silva",
   phone: "(11) 99999-1234",
   email: "joao@example.com",
   company: "Minha empresa",
   industry: "Serviços",
-  needs: ["Financeiro"],
+  cnpj: "11.222.333/0001-81",
+  hasNoCnpj: false,
+  needs: ["Financeiro e fluxo de caixa"],
   message: "",
   consent: true,
 };
@@ -22,5 +24,12 @@ describe("Diagnosis rules", () => {
     expect(contactSchema.safeParse({ ...valid, email: "invalid", phone: "123" }).success).toBe(
       false,
     );
+  });
+  it("never blocks the company step because of the CNPJ", () => {
+    const { cnpj: _cnpj, hasNoCnpj: _hasNoCnpj, ...withoutCnpj } = valid;
+    expect(companySchema.safeParse(withoutCnpj).success).toBe(true);
+    expect(companySchema.safeParse({ ...valid, cnpj: "" }).success).toBe(true);
+    expect(companySchema.safeParse({ ...valid, cnpj: "11.222.333/0001-80" }).success).toBe(true);
+    expect(companySchema.safeParse({ ...valid, hasNoCnpj: true }).success).toBe(true);
   });
 });

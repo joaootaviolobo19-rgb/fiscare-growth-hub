@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { whatsappLink, whatsappMessages } from "@/lib/contact";
@@ -26,7 +27,7 @@ export function WhatsappButton({
   large?: boolean;
   className?: string;
 }) {
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
   return (
     <motion.div
       whileHover={reduced ? {} : { scale: 1.03 }}
@@ -49,7 +50,7 @@ export function WhatsappButton({
 }
 
 export function WhatsappFloat() {
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
   return (
     <motion.a
       href={whatsappLink(whatsappMessages.contato)}
@@ -71,7 +72,7 @@ export function WhatsappFloat() {
 const exitOfferSeenKey = "fiscare:oferta-whatsapp";
 
 export function WhatsappExitOffer() {
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {

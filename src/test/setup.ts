@@ -18,3 +18,21 @@ Object.defineProperty(window, "matchMedia", {
     dispatchEvent: () => {},
   }),
 });
+
+// jsdom não traz IntersectionObserver; o whileInView do Framer Motion quebra sem ele.
+class NoopIntersectionObserver {
+  root = null;
+  rootMargin = "";
+  thresholds = [];
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+
+Object.defineProperty(globalThis, "IntersectionObserver", {
+  writable: true,
+  value: NoopIntersectionObserver,
+});

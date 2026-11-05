@@ -11,12 +11,12 @@ export const industries = [
 ] as const;
 
 export const needs = [
-  "Fiscal e impostos",
-  "Financeiro",
-  "Abrir ou regularizar empresa",
+  "Financeiro e fluxo de caixa",
+  "Contabilidade e impostos",
   "Departamento pessoal",
   "Marketing digital",
-  "Planejamento",
+  "Abertura ou regularização",
+  "Consultoria empresarial",
   "Ainda não sei",
 ] as const;
 
@@ -39,6 +39,9 @@ export const companySchema = z.object({
   industry: z.enum(industries, {
     errorMap: () => ({ message: "Selecione o ramo de atuação." }),
   }),
+  // CNPJ é opcional de propósito: quem ainda não abriu a empresa não pode ficar preso aqui.
+  cnpj: z.string().trim().max(18, "Use até 18 caracteres.").default(""),
+  hasNoCnpj: z.boolean().default(false),
 });
 
 export const diagnosisSchema = contactSchema.merge(companySchema).extend({

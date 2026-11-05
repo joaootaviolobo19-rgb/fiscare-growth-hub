@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MotionConfig } from "framer-motion";
-import { Founders } from "@/components/fiscare/Founders";
+import { IntroCurtain } from "@/components/fiscare/IntroCurtain";
 import { WhatsappExitOffer, WhatsappFloat } from "@/components/fiscare/Whatsapp";
+import { ServiceMarquee } from "@/components/fiscare/ServiceMarquee";
+import { SocialProof } from "@/components/fiscare/SocialProof";
 import {
   Header,
   Hero,
@@ -39,13 +41,15 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <MotionConfig reducedMotion="user">
+      <IntroCurtain />
       <Header />
       <main>
         <Hero />
         <Pains />
         <Dictionary />
+        <SocialProof />
         <Services />
-        <Founders />
+        <ServiceMarquee />
         <Process />
         <FAQ />
         <FinalCTA />

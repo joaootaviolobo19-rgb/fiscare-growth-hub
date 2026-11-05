@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring, useTransform } from "framer-motion";
+import { useReducedMotionSafe } from "@/lib/use-reduced-motion-safe";
 import {
   BookOpen,
   Check,
   ChevronDown,
-  Quote,
-  Wallet,
-  FileText,
-  Users,
-  Megaphone,
-  Briefcase,
-  TrendingUp,
+  ClipboardPen,
+  FileCheck2,
+  ScanSearch,
   ShieldCheck,
   Instagram,
   Linkedin,
@@ -21,11 +18,13 @@ import { Button } from "@/components/ui/button";
 import { Logo, DiagnosisButton, Reveal, RevealWords } from "./shared";
 import { WhatsappGlyph } from "./Whatsapp";
 import { whatsappDisplay, whatsappLink, whatsappMessages } from "@/lib/contact";
+import { faqGroups, services } from "@/lib/landing-content";
+import { usePointerGlow } from "@/lib/pointer-glow";
 import { DiagnosisForm } from "./DiagnosisForm";
-import { FounderFaces } from "./Founders";
+import { FinanceBackdrop } from "./FinanceBackdrop";
 
 export function Header() {
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 120, damping: 26, mass: 0.6 });
 
@@ -37,9 +36,6 @@ export function Header() {
           <nav className="hidden items-center gap-6 lg:flex" aria-label="Navegação principal">
             <a className="header-link" href="#servicos">
               Nossas soluções
-            </a>
-            <a className="header-link" href="#equipe">
-              Quem somos
             </a>
             <a className="header-link" href="#processo">
               Como funciona
@@ -75,7 +71,13 @@ const miniTerms = [
 
 export function Hero() {
   const [term, setTerm] = useState(0);
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const backdropY = useTransform(scrollYProgress, [0, 1], [0, 130]);
 
   useEffect(() => {
     const timer = setTimeout(() => setTerm((t) => (t + 1) % miniTerms.length), 5000);
@@ -85,27 +87,35 @@ export function Hero() {
   const item = miniTerms[term];
 
   return (
-    <section className="hero">
+    <section className="hero" ref={heroRef}>
+      <motion.div className="hero-backdrop" style={reduced ? {} : { y: backdropY }}>
+        <FinanceBackdrop />
+      </motion.div>
       <div className="site-container hero-inner">
-        <div className="min-w-0">
-          <Reveal>
-            <div className="eyebrow text-on-dark-muted">
-              <span className="eyebrow-line" />
-              CUIDADO COMPLETO. CONVERSA SIMPLES.
-            </div>
-            <h1>
-              <RevealWords text="Sua empresa inteira cuidada por uma só equipe," />{" "}
-              <RevealWords delay={0.42} text="explicada do jeito que você entende." />
-            </h1>
-          </Reveal>
-          <Reveal delay={0.12}>
-            <p className="hero-description">
-              Financeiro, impostos, funcionários, marketing e planejamento: a Fiscare assessora
-              todas as frentes do seu negócio para você focar no que faz de melhor e crescer sem
-              susto.
-            </p>
-          </Reveal>
-          <Reveal delay={0.2}>
+        <div className="hero-copy min-w-0">
+          <div className="eyebrow text-on-dark-muted hero-rise">
+            <span className="eyebrow-line" />
+            CUIDADO COMPLETO. CONVERSA SIMPLES.
+          </div>
+          <h1>
+            <span className="headline-line">
+              <span>Sua empresa inteira</span>
+            </span>{" "}
+            <span className="headline-line">
+              <span>cuidada por uma só equipe,</span>
+            </span>{" "}
+            <span className="headline-line">
+              <span>explicada do jeito que</span>
+            </span>{" "}
+            <span className="headline-line">
+              <span className="headline-accent">você entende.</span>
+            </span>
+          </h1>
+          <p className="hero-description hero-rise" style={{ animationDelay: "1.5s" }}>
+            Assessoria financeira, contábil, empresarial e marketing digital para empresas que
+            querem crescer com organização, controle e planejamento.
+          </p>
+          <div className="hero-rise" style={{ animationDelay: "1.58s" }}>
             <div className="dictionary-mini" aria-live="polite">
               <div className="mb-3 flex items-center justify-between text-sm text-on-dark-muted">
                 <span className="flex items-center gap-2">
@@ -145,24 +155,21 @@ export function Hero() {
                 transition={{ duration: 5, ease: "linear" }}
               />
             </div>
-          </Reveal>
-          <Reveal delay={0.3}>
-            <FounderFaces />
-            <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-on-dark-muted">
-              <span className="flex items-center gap-1.5">
-                <Check size={12} className="text-cta" />
-                Todas as áreas, uma equipe
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Check size={12} className="text-cta" />
-                Sem complicação
-              </span>
-            </div>
-          </Reveal>
+          </div>
+          <div className="hero-checks hero-rise" style={{ animationDelay: "1.66s" }}>
+            <span className="flex items-center gap-1.5">
+              <Check size={12} className="text-cta" />
+              Todas as áreas, uma equipe
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Check size={12} className="text-cta" />
+              Sem complicação
+            </span>
+          </div>
         </div>
-        <Reveal delay={0.15}>
+        <div className="hero-rise" style={{ animationDelay: "1.44s" }}>
           <DiagnosisForm />
-        </Reveal>
+        </div>
       </div>
     </section>
   );
@@ -179,7 +186,7 @@ const pains = [
 
 export function Pains() {
   return (
-    <section className="section bg-muted">
+    <section className="section bg-muted pains-section">
       <div className="site-container">
         <Reveal className="mb-9 text-center">
           <p className="section-label">A GENTE ENTENDE VOCÊ</p>
@@ -188,12 +195,14 @@ export function Pains() {
             <br className="hidden sm:block" /> passou pela sua cabeça?
           </h2>
         </Reveal>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="pains-grid">
           {pains.map((p, i) => (
             <Reveal key={p} delay={i * 0.04}>
               <article className="pain-card">
-                <Quote size={22} className="pain-quote mb-3 text-primary/25" fill="currentColor" />
-                <p className="text-base leading-6 italic">“{p}”</p>
+                <span className="pain-mark" aria-hidden="true">
+                  “
+                </span>
+                <p className="text-base leading-6 italic">{p}</p>
               </article>
             </Reveal>
           ))}
@@ -238,7 +247,7 @@ const terms = [
 
 export function Dictionary() {
   const [active, setActive] = useState(0);
-  const reduced = useReducedMotion();
+  const reduced = useReducedMotionSafe();
   const selected = terms[active];
 
   return (
@@ -302,66 +311,24 @@ export function Dictionary() {
   );
 }
 
-const services = [
-  {
-    title: "Assessoria Financeira",
-    icon: Wallet,
-    items: [
-      "Saiba para onde vai o seu dinheiro",
-      "Organize contas a pagar e receber",
-      "Planeje suas retiradas com segurança",
-    ],
-  },
-  {
-    title: "Fiscal e Tributária",
-    icon: FileText,
-    items: [
-      "Pague os impostos certos, sem surpresas",
-      "Encontre o melhor regime tributário",
-      "Mantenha suas obrigações em dia",
-    ],
-  },
-  {
-    title: "Departamento Pessoal",
-    icon: Users,
-    items: [
-      "Admissões, férias e rescisões",
-      "Folha de pagamento e eSocial",
-      "Segurança nas relações de trabalho",
-    ],
-  },
-  {
-    title: "Marketing Digital",
-    icon: Megaphone,
-    items: [
-      "Presença digital que faz sentido",
-      "Anúncios para alcançar seus clientes",
-      "Estratégia para fortalecer sua marca",
-    ],
-  },
-  {
-    title: "Abertura e Legalização",
-    icon: Briefcase,
-    items: [
-      "Tire sua ideia do papel",
-      "Abra ou regularize sua empresa",
-      "Conte com apoio em cada etapa",
-    ],
-  },
-  {
-    title: "Consultoria e Planejamento",
-    icon: TrendingUp,
-    items: [
-      "Decisões apoiadas em números",
-      "Metas e planejamento para crescer",
-      "Visão completa do seu negócio",
-    ],
-  },
-];
-
 export function Services() {
+  const glowRef = usePointerGlow<HTMLElement>();
+  const reduced = useReducedMotionSafe();
+  const { scrollYProgress } = useScroll({
+    target: glowRef,
+    offset: ["start end", "end start"],
+  });
+  const backdropY = useTransform(scrollYProgress, [0, 1], [-70, 70]);
+
   return (
-    <section id="servicos" className="section services scroll-mt-22">
+    <section id="servicos" ref={glowRef} className="section services spotlight scroll-mt-22">
+      <motion.div
+        className="services-backdrop"
+        aria-hidden="true"
+        style={reduced ? {} : { y: backdropY }}
+      >
+        <FinanceBackdrop variant="band" />
+      </motion.div>
       <div className="site-container">
         <Reveal className="services-heading">
           <p className="section-label text-cta">UM NEGÓCIO. TODAS AS FRENTES.</p>
@@ -373,204 +340,178 @@ export function Services() {
             Do dia a dia ao próximo grande passo, você tem com quem contar.
           </p>
         </Reveal>
-        <div className="services-list">
-          {services.map((s, i) => (
-            <Reveal key={s.title} delay={(i % 2) * 0.12} x={(i % 2 === 0 ? -1 : 1) * 28}>
-              <article className="service-card">
-                <div className="service-top">
-                  <span className="service-index">0{i + 1}</span>
-                  <div className="service-icon">
-                    <s.icon size={28} strokeWidth={1.7} />
+        <ol className="services-list">
+          {services.map((service, i) => (
+            <li key={service.title} className="service-row">
+              <Reveal delay={(i % 2) * 0.06} y={20} x={(i % 2 === 0 ? -1 : 1) * 16}>
+                <div className="service-line">
+                  <span className="service-index" aria-hidden="true">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div className="service-title">
+                    <service.icon size={19} strokeWidth={1.8} aria-hidden="true" />
+                    <h3>{service.title}</h3>
                   </div>
+                  <ul className="service-items">
+                    {service.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                 </div>
-                <h3>{s.title}</h3>
-                <ul>
-                  {s.items.map((item) => (
-                    <li key={item}>
-                      <Check size={18} className="shrink-0 text-cta" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              </article>
-            </Reveal>
+              </Reveal>
+            </li>
           ))}
-        </div>
+        </ol>
       </div>
     </section>
   );
 }
 
 const steps = [
-  [
-    "Você se cadastra.",
-    "Preencha o formulário e conte um pouco sobre sua empresa. É rápido, simples e sem compromisso.",
-  ],
-  [
-    "A gente analisa.",
-    "Nossa equipe olha para o seu momento e identifica onde podemos ajudar de verdade.",
-  ],
-  [
-    "Você recebe um plano.",
-    "Conversamos com você sobre os próximos passos, de um jeito claro e que faça sentido para o seu negócio.",
-  ],
+  {
+    title: "Você se cadastra.",
+    description:
+      "Preencha o formulário e conte um pouco sobre sua empresa. É rápido, simples e sem compromisso.",
+    label: "Passo um",
+    icon: ClipboardPen,
+  },
+  {
+    title: "A gente analisa.",
+    description:
+      "Nossa equipe olha para o seu momento e identifica onde podemos ajudar de verdade.",
+    label: "Passo dois",
+    icon: ScanSearch,
+  },
+  {
+    title: "Você recebe um plano.",
+    description:
+      "Conversamos com você sobre os próximos passos, de um jeito claro e que faça sentido para o seu negócio.",
+    label: "Passo três",
+    icon: FileCheck2,
+  },
 ];
 
 export function Process() {
-  const reduced = useReducedMotion();
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 85%", "end 55%"] });
-  const draw = useSpring(scrollYProgress, { stiffness: 80, damping: 22 });
-
   return (
-    <section id="processo" className="section bg-muted scroll-mt-22">
+    <section id="processo" className="section process-section scroll-mt-22">
       <div className="site-container">
-        <Reveal>
-          <p className="section-label">SIMPLES, DO COMEÇO AO FIM</p>
-          <h2 className="section-title">
-            Como funciona o<br className="hidden sm:block" /> diagnóstico gratuito.
-          </h2>
-        </Reveal>
-        <div className="process-grid" ref={ref}>
-          <div className="process-line bg-transparent">
-            <motion.div
-              className="h-full w-full origin-top-left bg-primary max-md:hidden"
-              style={reduced ? {} : { scaleX: draw }}
-            />
-            <motion.div
-              className="h-full w-full origin-top bg-primary md:hidden"
-              style={reduced ? {} : { scaleY: draw }}
-            />
-          </div>
-          {steps.map(([title, description], i) => (
-            <Reveal key={title} delay={i * 0.12} className="process-step">
-              <motion.div
-                className="process-number"
-                whileInView={reduced ? {} : { scale: [1, 1.15, 1] }}
-                viewport={{ once: true, amount: 1 }}
-                transition={{ duration: 0.6, delay: i * 0.15 + 0.2 }}
-              >
-                {i + 1}
-              </motion.div>
-              <div>
-                <h3 className="mt-5 text-sm font-bold max-md:mt-1">{title}</h3>
-                <p className="section-copy mt-3 max-w-80 text-base">{description}</p>
-              </div>
-            </Reveal>
-          ))}
+        <div className="process-head">
+          <Reveal>
+            <p className="section-label">SIMPLES, DO COMEÇO AO FIM</p>
+            <h2 className="section-title">
+              Como funciona o<br className="hidden sm:block" /> diagnóstico gratuito.
+            </h2>
+          </Reveal>
+          <Reveal delay={0.08} className="process-aside">
+            <p className="section-copy">
+              Três passos, nenhuma burocracia. O primeiro é só contar o que você precisa.
+            </p>
+            <DiagnosisButton />
+          </Reveal>
         </div>
-        <Reveal className="mt-11">
-          <DiagnosisButton />
-        </Reveal>
+        <ol className="process-sheet">
+          {steps.map(({ title, description, label, icon: Icon }, i) => (
+            <li key={title} className="process-item">
+              <Reveal delay={i * 0.08} className="process-row">
+                <span className="process-ghost" aria-hidden="true">
+                  0{i + 1}
+                </span>
+                <div className="process-body">
+                  <span className="process-kicker">
+                    <Icon size={14} />
+                    {label}
+                  </span>
+                  <h3>{title}</h3>
+                  <p>{description}</p>
+                </div>
+              </Reveal>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-const questions = [
-  [
-    "O diagnóstico é gratuito mesmo?",
-    "Sim. O diagnóstico inicial é gratuito e sem compromisso. A gente entende seu momento e apresenta os caminhos possíveis. Qualquer serviço contratado depois é combinado com você antes.",
-  ],
-  [
-    "Preciso contratar todas as áreas?",
-    "Não. Você pode contar com a Fiscare apenas nas áreas de que precisa hoje e ampliar o apoio conforme sua empresa cresce.",
-  ],
-  [
-    "Atendem MEI?",
-    "Sim. Ajudamos o MEI a se organizar, cumprir suas obrigações e entender os próximos passos quando o negócio cresce.",
-  ],
-  [
-    "Já tenho contador. Faz sentido falar com vocês?",
-    "Sim. Podemos apoiar o financeiro, o marketing e o planejamento, complementando o trabalho que você já tem.",
-  ],
-  [
-    "Ainda não abri minha empresa. Podem me ajudar?",
-    "Sim. Podemos orientar o planejamento, a abertura do CNPJ e os primeiros passos para começar de forma organizada.",
-  ],
-  [
-    "Vocês cuidam da folha dos meus funcionários?",
-    "Sim. O Departamento Pessoal apoia folha de pagamento, admissões, férias, rescisões e obrigações do eSocial.",
-  ],
-  [
-    "Como vocês vão entrar em contato?",
-    "Após receber seu cadastro, nossa equipe entra em contato pelo WhatsApp ou pelo e-mail informado para conversar sobre seu negócio.",
-  ],
-];
-
 export function FAQ() {
-  const [open, setOpen] = useState<number | null>(0);
-  const reduced = useReducedMotion();
+  const [openId, setOpenId] = useState<string | null>(faqGroups[0]?.items[0]?.question ?? null);
+  const reduced = useReducedMotionSafe();
 
   return (
-    <section id="duvidas" className="section bg-muted border-t border-border scroll-mt-22">
-      <div className="site-container split-section">
-        <Reveal>
+    <section id="duvidas" className="section faq-section scroll-mt-22">
+      <div className="site-container">
+        <Reveal className="faq-head">
           <p className="section-label">PODE PERGUNTAR</p>
           <h2 className="section-title">Dúvidas comuns.</h2>
-          <p className="section-copy mt-5 max-w-75">
-            Uma boa parceria começa com clareza.
-            <br />
-            Vamos tirar suas dúvidas?
+          <p className="section-copy">
+            Uma boa parceria começa com clareza. Se a sua pergunta não estiver aqui, o botão verde
+            do WhatsApp acompanha você pela página.
           </p>
         </Reveal>
-        <Reveal>
-          <div className="faq-list">
-            {questions.map(([question, answer], i) => (
-              <motion.div
-                key={question}
-                initial={reduced ? false : { opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.4 }}
-                transition={{ duration: 0.45, delay: i * 0.06 }}
-                className={`faq-item ${open === i ? "open" : ""}`}
-              >
-                <h3>
-                  <Button
-                    variant="accordion"
-                    className="faq-trigger"
-                    aria-expanded={open === i}
-                    aria-controls={`faq-${i}`}
-                    id={`faq-trigger-${i}`}
-                    onClick={() => setOpen(open === i ? null : i)}
-                  >
-                    {question}
-                    <ChevronDown
-                      className={`shrink-0 text-primary transition-transform duration-300 ${open === i ? "rotate-180" : ""}`}
-                    />
-                  </Button>
-                </h3>
-                <AnimatePresence initial={false}>
-                  {open === i && (
-                    <motion.div
-                      id={`faq-${i}`}
-                      role="region"
-                      aria-labelledby={`faq-trigger-${i}`}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: reduced ? 0 : 0.25 }}
-                      className="overflow-hidden"
-                    >
-                      <p className="faq-answer">{answer}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-muted-foreground">
-            Ficou outra dúvida? É só chamar no WhatsApp — o botão verde acompanha você pela página.
-          </p>
-        </Reveal>
+        <div className="faq-grid">
+          {faqGroups.map((group, groupIndex) => (
+            <Reveal key={group.id} delay={groupIndex * 0.08} className="faq-group">
+              <div className="faq-group-head">
+                <span className="faq-group-dot" aria-hidden="true" />
+                <h3 className="faq-group-title">{group.title}</h3>
+                <span className="faq-group-count" aria-hidden="true">
+                  {String(group.items.length).padStart(2, "0")}
+                </span>
+              </div>
+              <div className="faq-list">
+                {group.items.map(({ question, answer }, i) => {
+                  const id = `faq-${group.id}-${i}`;
+                  const isOpen = openId === question;
+                  return (
+                    <div key={question} className="faq-item">
+                      <h4>
+                        <Button
+                          variant="accordion"
+                          className="faq-trigger"
+                          aria-expanded={isOpen}
+                          aria-controls={id}
+                          id={`${id}-trigger`}
+                          onClick={() => setOpenId(isOpen ? null : question)}
+                        >
+                          {question}
+                          <ChevronDown
+                            className={`shrink-0 text-primary transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                          />
+                        </Button>
+                      </h4>
+                      <AnimatePresence initial={false}>
+                        {isOpen && (
+                          <motion.div
+                            id={id}
+                            role="region"
+                            aria-labelledby={`${id}-trigger`}
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: "auto", opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: reduced ? 0 : 0.25 }}
+                            className="overflow-hidden"
+                          >
+                            <p className="faq-answer">{answer}</p>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                })}
+              </div>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 export function FinalCTA() {
+  const glowRef = usePointerGlow<HTMLElement>();
+
   return (
-    <section className="final-cta">
+    <section className="final-cta spotlight" ref={glowRef}>
       <div className="site-container grid grid-cols-1 items-center gap-7 md:grid-cols-[minmax(0,1fr)_auto]">
         <Reveal>
           <h2>
