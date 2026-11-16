@@ -1,6 +1,7 @@
 import {
   Briefcase,
   FileText,
+  HeartHandshake,
   Megaphone,
   TrendingUp,
   Users,
@@ -40,6 +41,15 @@ export const services: Service[] = [
       "Admissões, férias e rescisões",
       "Folha de pagamento e eSocial",
       "Segurança nas relações de trabalho",
+    ],
+  },
+  {
+    title: "RH (Recursos Humanos)",
+    icon: HeartHandshake,
+    items: [
+      "Recrutamento e seleção",
+      "Treinamento e desenvolvimento",
+      "Clima e cultura organizacional",
     ],
   },
   {
@@ -165,11 +175,31 @@ export const faqGroups: FaqGroup[] = [
   },
 ];
 
-export const socialProofPhrases = [
-  "Todas as frentes do seu negócio em uma só conversa.",
-  "Explicação clara, sem juridiquês.",
-  "Cada empresa tem seu momento — a gente parte do seu.",
-  "Do primeiro CNPJ ao próximo passo de crescimento.",
-  "Você fala com gente que acompanha o seu dia a dia.",
-  "Organização primeiro. Crescimento com os pés no chão.",
-] as const;
+/**
+ * Avaliações reais do perfil da Fiscare no Google (nota 5,0 em 12 avaliações).
+ * Textos e nomes foram copiados do perfil; só a ortografia foi ajustada.
+ * Nunca acrescente depoimento, nome ou nota que não exista lá.
+ */
+export const googleReviews = {
+  rating: "5,0",
+  count: 12,
+  url: "https://www.google.com/maps?cid=12620472802316981306",
+  items: [
+    {
+      name: "André Valvassori",
+      text: "Atendimento excelente! A equipe da Fiscare foi super atenciosa, tirou todas as minhas dúvidas e me ajudou a organizar a parte fiscal da minha empresa com muita clareza e profissionalismo. Me senti seguro do início ao fim! Recomendo demais para quem busca seriedade e resultado!",
+    },
+    {
+      name: "Caleandra Martins Velho",
+      text: "Excelente empresa de contabilidade, com atendimento ágil, transparente e extremamente profissional. Demonstram domínio técnico, comprometimento com prazos e total clareza nas orientações. Recomendo com confiança!",
+    },
+    {
+      name: "Thamyres Pereira",
+      text: "Recomendo. Atendimento excelente, com ótimos profissionais à disposição.",
+    },
+    {
+      name: "Pedro",
+      text: "Incrível, atendimento excelente e o profissionalismo é impecável, valores dentro do possível.",
+    },
+  ],
+} as const;

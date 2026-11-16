@@ -45,7 +45,7 @@ O `npm run dev` não precisa do runtime Deno: o emulador de Netlify Edge Functio
   `routeTree.gen.ts` é gerado automaticamente; não edite à mão.
 - `src/components/fiscare/` — seções da landing (`sections.tsx`), formulário (`DiagnosisForm.tsx`),
   abertura em cortina (`IntroCurtain.tsx`), cena financeira de fundo em SVG (`FinanceBackdrop.tsx`),
-  marquee de serviços (`ServiceMarquee.tsx`), prova social (`SocialProof.tsx`), blocos compartilhados
+  marquee de serviços (`ServiceMarquee.tsx`), avaliações do Google (`SocialProof.tsx`), blocos compartilhados
   (`shared.tsx`) e controles de WhatsApp (`Whatsapp.tsx`).
 - `src/components/ui/button.tsx` — único componente de UI base; novas variantes entram no `cva`
   de `buttonVariants` local ao arquivo.
@@ -54,12 +54,27 @@ O `npm run dev` não precisa do runtime Deno: o emulador de Netlify Edge Functio
   até 3 vezes, com 15s de timeout por tentativa.
 - `src/lib/diagnosis.ts` — schemas Zod e listas (`industries`, `needs`) do formulário. É a fronteira
   de validação: qualquer receptor futuro dos dados deve revalidar com `diagnosisSchema`.
-- `src/lib/landing-content.ts` — serviços, grupos do FAQ e as frases de prova social. Texto novo
-  desta página entra aqui, não dentro do JSX.
+- `src/lib/landing-content.ts` — serviços, grupos do FAQ e as avaliações do Google (nota, total,
+  link e textos). Texto novo desta página entra aqui, não dentro do JSX.
 - `src/lib/cnpj.ts` — máscara e dígito verificador do CNPJ (numérico e alfanumérico). O campo é
   opcional e nunca impede o envio; o resultado só alimenta um aviso na tela.
 - `src/lib/contact.ts` — número do WhatsApp, mensagens pré-preenchidas e `whatsappLink()`. Todo ponto
   de contato no site sai daqui: para trocar o número, edite apenas este arquivo.
+
+## Avaliações
+
+A seção antes dos serviços mostra o título "Quem já confia na Fiscare.", a nota **5,0 em 12
+avaliações** do perfil da Fiscare no Google e o link "Ver todas no Google". Abaixo, quatro
+depoimentos reais (André Valvassori, Caleandra Martins Velho, Thamyres Pereira e Pedro) rodam num
+carrossel: avança sozinho a cada 4,2s, tem setas de anterior/próxima, botão de pausar/retomar e
+aceita arraste ou rolagem horizontal. Ele pausa quando o mouse está em cima, quando algo dentro
+recebe foco, durante o arraste, quando a seção sai da tela e quando o visitante pede menos
+movimento — nesse último caso o botão de pausa some e as setas trocam de cartão sem animação.
+
+Nada é escrito pela equipe: os textos e nomes são copiados do perfil, com ajuste apenas de
+ortografia. Para trocar ou acrescentar uma avaliação, edite `googleReviews` em
+`src/lib/landing-content.ts` — e só publique o que existir de verdade no Google. O carrossel repete
+os cartões automaticamente para emendar o loop; não duplique entradas na lista.
 
 ## Formulário e entrega dos leads
 

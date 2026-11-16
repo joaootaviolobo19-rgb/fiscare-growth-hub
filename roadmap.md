@@ -43,6 +43,9 @@
 - **Serviços renomeados**: BPO Financeiro (Assessoria Financeira), Contabilidade e Gestão Tributária,
   Departamento Pessoal, Marketing Digital, Abertura e Legalização, Consultoria e Planejamento.
   As frentes agora vêm de `src/lib/landing-content.ts`.
+- **RH entrou no meio da lista** (posição 04, entre Departamento Pessoal e Marketing Digital):
+  "RH (Recursos Humanos)", com recrutamento e seleção, treinamento e desenvolvimento, e clima e
+  cultura organizacional. São sete frentes; o marquee e a numeração das linhas acompanham sozinhos.
 - **CNPJ no diagnóstico** (`src/lib/diagnosis.ts`, `src/lib/cnpj.ts`): campo mascarado
   `XX.XXX.XXX/XXXX-XX` no meio da etapa da empresa, com checkbox "Ainda não possui CNPJ? Clique aqui."
   que desabilita e limpa o campo. **Nunca bloqueia o envio**: CNPJ vazio, inválido ou ausente passa;
@@ -141,6 +144,23 @@
 - Testes novos em `src/lib/emailjs.test.ts` cobrem o mapeamento das variáveis, o formato do payload,
   o retry de rede, a não repetição de 4xx e a falha rápida sem configuração.
 
+### Avaliações do Google
+
+- A prova social virou a nota **5,0 em 12 avaliações** reais do perfil da Fiscare no Google, com
+  quatro depoimentos transcritos do perfil (André Valvassori, Caleandra Martins Velho, Thamyres
+  Pereira e Pedro), estrelas, selo do Google, avatar de iniciais e link "Ver todas no Google".
+- Os depoimentos rodam num carrossel que avança sozinho a cada 4,2s, com setas de anterior/próxima,
+  botão de pausar/retomar, contador de posição e arraste/rolagem horizontal. O trilho repete os
+  quatro cartões para emendar o loop sem salto; as cópias ficam `aria-hidden`.
+- O carrossel pausa no hover, no foco, no arraste, fora da tela e com movimento reduzido (nesse caso
+  o botão de pausa some e as setas pulam sem animação).
+- O cabeçalho da seção ficou só com o título "Quem já confia na Fiscare." mais nota, total e link —
+  sem o selo "AVALIAÇÕES NO GOOGLE" e sem subtítulo, como o dono pediu.
+- Os textos e nomes vivem em `googleReviews` (`src/lib/landing-content.ts`) e só a ortografia foi
+  ajustada; nada foi escrito pela equipe.
+- A seção continua antes dos serviços e os testes conferem título, nota, total, textos, nomes,
+  estrelas, link externo, setas, pausa e o caminho de movimento reduzido.
+
 ## Pendente antes do lançamento
 
 - **URL anunciada errada:** o site roda no Netlify, mas a página inicial do repositório no GitHub
@@ -153,9 +173,6 @@
   Environment variables; sem elas o build passa e o formulário quebra no ar.
 - **Quota do EmailJS:** conferir no painel se o plano tem folga (free = 200 e-mails/mês). Quota
   estourada derruba o envio e não há como corrigir no cliente.
-- **Depoimentos reais:** a prova social hoje usa só frases da própria Fiscare. Se a empresa tiver
-  2-3 depoimentos autorizados (nome, empresa e cidade) e/ou resultados agregados, eles entram na
-  mesma seção — junto com as frases ou no lugar delas.
 - **Vídeo:** um vídeo curto (fundadores explicando o diagnóstico, 30-60s) aumenta a retenção do hero.
   Precisamos do arquivo ou de um link hospedado (YouTube/Vimeo) para embutir sem pesar no carregamento.
 - **Campos do formulário:** o e-mail segue obrigatório na etapa 1 (decisão do dono). As referências
